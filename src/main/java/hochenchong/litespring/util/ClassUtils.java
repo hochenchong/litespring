@@ -1,6 +1,6 @@
 package hochenchong.litespring.util;
 
-// 直接从 spring-framework-3.2.18.RELEASE\spring-core\src\main\java\org\springframework\util 中复制需要的方法
+// 直接从 spring-framework-3.2.18.RELEASE/spring-core/src/main/java/org/springframework/util 中复制需要的方法
 public class ClassUtils {
     /**
      * Return the default ClassLoader to use: typically the thread context
