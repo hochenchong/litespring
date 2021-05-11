@@ -3,16 +3,16 @@ package hochenchong.litespring.context.support;
 import hochenchong.litespring.beans.factory.support.DefaultBeanFactory;
 import hochenchong.litespring.beans.factory.xml.XmlBeanDefinitionReader;
 import hochenchong.litespring.context.ApplicationContext;
-import hochenchong.litespring.core.io.ClassPathResource;
+import hochenchong.litespring.core.io.FileSystemResource;
 import hochenchong.litespring.core.io.Resource;
 
-public class ClassPathXmlApplicationContext implements ApplicationContext {
+public class FileSystemXmlApplicationContext implements ApplicationContext {
     private DefaultBeanFactory beanFactory;
 
-    public ClassPathXmlApplicationContext(String configFile) {
+    public FileSystemXmlApplicationContext(String path) {
         beanFactory = new DefaultBeanFactory();
         XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(beanFactory);
-        Resource resource = new ClassPathResource(configFile);
+        Resource resource = new FileSystemResource(path);
         reader.loadBeanDefinitions(resource);
     }
 

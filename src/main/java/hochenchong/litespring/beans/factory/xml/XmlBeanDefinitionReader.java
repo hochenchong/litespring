@@ -4,7 +4,7 @@ import hochenchong.litespring.beans.BeanDefinition;
 import hochenchong.litespring.beans.factory.BeanDefinitionStoreException;
 import hochenchong.litespring.beans.factory.support.BeanDefinitionRegistry;
 import hochenchong.litespring.beans.factory.support.GenericBeanDefinition;
-import hochenchong.litespring.util.ClassUtils;
+import hochenchong.litespring.core.io.Resource;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -25,12 +25,11 @@ public class XmlBeanDefinitionReader {
         this.beanDefinitionRegistry = beanDefinitionRegistry;
     }
 
-    public void loadBeanDefinitions(String configFile) {
+    public void loadBeanDefinitions(Resource resource) {
         // 解析这个文件
         InputStream inputStream = null;
         try {
-            ClassLoader classLoader = ClassUtils.getDefaultClassLoader();
-            inputStream = classLoader.getResourceAsStream(configFile);
+            inputStream = resource.getInputStream();
             SAXReader reader = new SAXReader();
             Document document = reader.read(inputStream);
 
@@ -44,8 +43,8 @@ public class XmlBeanDefinitionReader {
                 BeanDefinition beanDefinition = new GenericBeanDefinition(id, beanClassName);
                 this.beanDefinitionRegistry.registerBeanDefinition(id, beanDefinition);
             }
-        } catch (DocumentException e) {
-            throw new BeanDefinitionStoreException("IOException parsing XML document " + configFile + " failed", e);
+        } catch (DocumentException | IOException e) {
+            throw new BeanDefinitionStoreException("IOException parsing XML document " + resource.getDescription() + " failed", e);
         } finally {
             if (inputStream != null) {
                 try {
