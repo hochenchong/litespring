@@ -12,8 +12,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class BeanFactoryTest {
     DefaultBeanFactory beanFactory;
@@ -33,11 +32,21 @@ public class BeanFactoryTest {
 
         BeanDefinition beanDefinition = beanFactory.getBeanDefinition("petStore");
 
+        assertTrue(beanDefinition.isSingleton());
+
+        assertFalse(beanDefinition.isPrototype());
+
+        assertEquals(BeanDefinition.SCOPE_DEFAULT, beanDefinition.getScope());
+
         assertEquals("hochenchong.litespring.service.v1.PetStoreService", beanDefinition.getBeanClassName());
 
         PetStoreService petStoreService = (PetStoreService) beanFactory.getBean("petStore");
 
         assertNotNull(petStoreService);
+
+        PetStoreService petStoreService1 = (PetStoreService) beanFactory.getBean("petStore");
+
+        assertTrue(petStoreService.equals(petStoreService1));
     }
 
     @Test
@@ -61,5 +70,27 @@ public class BeanFactoryTest {
             return;
         }
         Assert.fail("expect BeanDefinitionStoreException");
+    }
+
+    @Test
+    public void testGetProtoTypeBean() {
+        resource = new ClassPathResource("petstore-v1-prototype.xml");
+        reader.loadBeanDefinitions(resource);
+
+        BeanDefinition beanDefinition = beanFactory.getBeanDefinition("petStore");
+
+        assertFalse(beanDefinition.isSingleton());
+
+        assertTrue(beanDefinition.isPrototype());
+
+        assertEquals(BeanDefinition.SCOPE_PROTOTYPE, beanDefinition.getScope());
+
+        PetStoreService petStoreService = (PetStoreService) beanFactory.getBean("petStore");
+
+        assertNotNull(petStoreService);
+
+        PetStoreService petStoreService1 = (PetStoreService) beanFactory.getBean("petStore");
+
+        assertFalse(petStoreService.equals(petStoreService1));
     }
 }
