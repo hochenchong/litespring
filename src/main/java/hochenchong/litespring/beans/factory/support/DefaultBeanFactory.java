@@ -1,11 +1,16 @@
 package hochenchong.litespring.beans.factory.support;
 
 import hochenchong.litespring.beans.BeanDefinition;
+import hochenchong.litespring.beans.PropertyValue;
 import hochenchong.litespring.beans.factory.BeanCreationException;
 import hochenchong.litespring.beans.factory.BeanDefinitionStoreException;
 import hochenchong.litespring.beans.factory.config.ConfigurableBeanFactory;
 import hochenchong.litespring.util.ClassUtils;
 
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -48,6 +53,44 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
     }
 
     private Object createBean(BeanDefinition beanDefinition) {
+        // 创建实例
+        Object bean = instantiateBean(beanDefinition);
+        // 设置属性
+        populateBean(beanDefinition, bean);
+
+        return bean;
+    }
+
+    private void populateBean(BeanDefinition beanDefinition, Object bean) {
+        List<PropertyValue> propertyValues = beanDefinition.getPropertyValues();
+
+        if (propertyValues == null || propertyValues.isEmpty()) {
+            return;
+        }
+
+        BeanDefinitionValueResolver valueResolver = new BeanDefinitionValueResolver(this);
+
+        try {
+            for (PropertyValue propertyValue : propertyValues) {
+                String propertyValueName = propertyValue.getName();
+                Object originalValue = propertyValue.getValue();
+                Object resolveValue = valueResolver.resolveValueIfNecessary(originalValue);
+                // 将获得的属性，给 bean 赋值
+                BeanInfo beanInfo = Introspector.getBeanInfo(bean.getClass());
+                PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+                for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+                    if (propertyDescriptor.getName().equals(propertyValueName)) {
+                        propertyDescriptor.getWriteMethod().invoke(bean, resolveValue);
+                        break;
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            throw new BeanCreationException("Failed to obtain BeanInfo for class [" + beanDefinition.getPropertyValues());
+        }
+    }
+
+    private Object instantiateBean(BeanDefinition beanDefinition) {
         ClassLoader classLoader = this.getBeanClassLoader();
         String beanClassName = beanDefinition.getBeanClassName();
         try {
