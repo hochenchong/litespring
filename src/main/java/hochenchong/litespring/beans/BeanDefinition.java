@@ -2,6 +2,8 @@ package hochenchong.litespring.beans;
 
 import hochenchong.litespring.beans.factory.config.ConfigurableBeanFactory;
 
+import java.util.List;
+
 public interface BeanDefinition {
     String SCOPE_DEFAULT = "";
 
@@ -18,4 +20,6 @@ public interface BeanDefinition {
     void setScope(String scope);
 
     String getScope();
+
+    List<PropertyValue> getPropertyValues();
 }

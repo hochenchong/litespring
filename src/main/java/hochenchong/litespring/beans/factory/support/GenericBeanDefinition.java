@@ -1,6 +1,10 @@
 package hochenchong.litespring.beans.factory.support;
 
 import hochenchong.litespring.beans.BeanDefinition;
+import hochenchong.litespring.beans.PropertyValue;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GenericBeanDefinition implements BeanDefinition {
     private String id;
@@ -9,6 +13,8 @@ public class GenericBeanDefinition implements BeanDefinition {
     String scope = SCOPE_DEFAULT;
     boolean singleton = true;
     boolean prototype = false;
+
+    List<PropertyValue> propertyValues = new ArrayList<>();
 
     public GenericBeanDefinition(String id, String beanClassName) {
         this.id = id;
@@ -40,5 +46,10 @@ public class GenericBeanDefinition implements BeanDefinition {
     @Override
     public String getScope() {
         return this.scope;
+    }
+
+    @Override
+    public List<PropertyValue> getPropertyValues() {
+        return this.propertyValues;
     }
 }
