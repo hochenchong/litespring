@@ -1,7 +1,32 @@
 package hochenchong.litespring.util;
 
+import java.lang.reflect.Proxy;
+import java.util.HashMap;
+import java.util.Map;
+
 // 直接从 spring-framework-3.2.18.RELEASE/spring-core/src/main/java/org/springframework/util 中复制需要的方法
 public class ClassUtils {
+    public static final String ARRAY_SUFFIX = "[]";
+
+    private static final Map<Class<?>, Class<?>> primitiveWrapperTypeMap = new HashMap<Class<?>, Class<?>>(8);
+
+    private static final Map<Class<?>, Class<?>> primitiveTypeToWrapperMap = new HashMap<Class<?>, Class<?>>(8);
+
+    static {
+        primitiveWrapperTypeMap.put(Boolean.class, boolean.class);
+        primitiveWrapperTypeMap.put(Byte.class, byte.class);
+        primitiveWrapperTypeMap.put(Character.class, char.class);
+        primitiveWrapperTypeMap.put(Double.class, double.class);
+        primitiveWrapperTypeMap.put(Float.class, float.class);
+        primitiveWrapperTypeMap.put(Integer.class, int.class);
+        primitiveWrapperTypeMap.put(Long.class, long.class);
+        primitiveWrapperTypeMap.put(Short.class, short.class);
+
+        for (Map.Entry<Class<?>, Class<?>> entry : primitiveWrapperTypeMap.entrySet()) {
+            primitiveTypeToWrapperMap.put(entry.getValue(), entry.getKey());
+        }
+    }
+
     /**
      * Return the default ClassLoader to use: typically the thread context
      * ClassLoader, if available; the ClassLoader that loaded the ClassUtils
@@ -38,5 +63,76 @@ public class ClassUtils {
             }
         }
         return cl;
+    }
+
+    public static boolean isAssignableValue(Class<?> type, Object value) {
+        Assert.notNull(type, "Type must not be null");
+        return (value != null ? isAssignable(type, value.getClass()) : !type.isPrimitive());
+    }
+
+    public static boolean isAssignable(Class<?> lhsType, Class<?> rhsType) {
+        Assert.notNull(lhsType, "Left-hand side type must not be null");
+        Assert.notNull(rhsType, "Right-hand side type must not be null");
+        if (lhsType.isAssignableFrom(rhsType)) {
+            return true;
+        }
+        if (lhsType.isPrimitive()) {
+            Class<?> resolvedPrimitive = primitiveWrapperTypeMap.get(rhsType);
+            if (resolvedPrimitive != null && lhsType.equals(resolvedPrimitive)) {
+                return true;
+            }
+        }
+        else {
+            Class<?> resolvedWrapper = primitiveTypeToWrapperMap.get(rhsType);
+            if (resolvedWrapper != null && lhsType.isAssignableFrom(resolvedWrapper)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static String getDescriptiveType(Object value) {
+        if (value == null) {
+            return null;
+        }
+        Class<?> clazz = value.getClass();
+        if (Proxy.isProxyClass(clazz)) {
+            StringBuilder result = new StringBuilder(clazz.getName());
+            result.append(" implementing ");
+            Class<?>[] ifcs = clazz.getInterfaces();
+            for (int i = 0; i < ifcs.length; i++) {
+                result.append(ifcs[i].getName());
+                if (i < ifcs.length - 1) {
+                    result.append(',');
+                }
+            }
+            return result.toString();
+        }
+        else if (clazz.isArray()) {
+            return getQualifiedNameForArray(clazz);
+        }
+        else {
+            return clazz.getName();
+        }
+    }
+
+    public static String getQualifiedName(Class<?> clazz) {
+        Assert.notNull(clazz, "Class must not be null");
+        if (clazz.isArray()) {
+            return getQualifiedNameForArray(clazz);
+        }
+        else {
+            return clazz.getName();
+        }
+    }
+
+    private static String getQualifiedNameForArray(Class<?> clazz) {
+        StringBuilder result = new StringBuilder();
+        while (clazz.isArray()) {
+            clazz = clazz.getComponentType();
+            result.append(ARRAY_SUFFIX);
+        }
+        result.insert(0, clazz.getName());
+        return result.toString();
     }
 }

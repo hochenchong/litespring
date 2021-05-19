@@ -9,7 +9,8 @@ import org.junit.runners.Suite;
         BeanDefinitionValueResolverTest.class,
         ApplicationContextTestV2.class,
         CustomNumberEditorTest.class,
-        CustomBooleanEditorTest.class
+        CustomBooleanEditorTest.class,
+        TypeConverterTest.class
 })
 public class V2AllTests {
 }
