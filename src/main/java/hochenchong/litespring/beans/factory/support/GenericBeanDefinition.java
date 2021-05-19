@@ -1,6 +1,7 @@
 package hochenchong.litespring.beans.factory.support;
 
 import hochenchong.litespring.beans.BeanDefinition;
+import hochenchong.litespring.beans.ConstructorArgument;
 import hochenchong.litespring.beans.PropertyValue;
 
 import java.util.ArrayList;
@@ -15,6 +16,8 @@ public class GenericBeanDefinition implements BeanDefinition {
     boolean prototype = false;
 
     List<PropertyValue> propertyValues = new ArrayList<>();
+
+    private ConstructorArgument constructorArgument = new ConstructorArgument();
 
     public GenericBeanDefinition(String id, String beanClassName) {
         this.id = id;
@@ -51,5 +54,10 @@ public class GenericBeanDefinition implements BeanDefinition {
     @Override
     public List<PropertyValue> getPropertyValues() {
         return this.propertyValues;
+    }
+
+    @Override
+    public ConstructorArgument getConstructorArgument() {
+        return this.constructorArgument;
     }
 }

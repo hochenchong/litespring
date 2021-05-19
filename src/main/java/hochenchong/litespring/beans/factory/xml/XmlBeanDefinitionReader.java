@@ -1,6 +1,7 @@
 package hochenchong.litespring.beans.factory.xml;
 
 import hochenchong.litespring.beans.BeanDefinition;
+import hochenchong.litespring.beans.ConstructorArgument;
 import hochenchong.litespring.beans.PropertyValue;
 import hochenchong.litespring.beans.factory.BeanDefinitionStoreException;
 import hochenchong.litespring.beans.factory.support.BeanDefinitionRegistry;
@@ -35,6 +36,11 @@ public class XmlBeanDefinitionReader {
 
     public static final String NAME_ATTRIBUTE = "name";
 
+    // 用于解析构造方法
+    public static final String CONSTRUCTOR_ARG_ELEMENT = "constructor-arg";
+
+    public static final String TYPE_ATTRIBUTE = "type";
+
     BeanDefinitionRegistry beanDefinitionRegistry;
 
     private static final Logger logger = LoggerFactory.getLogger(XmlBeanDefinitionReader.class);
@@ -62,6 +68,7 @@ public class XmlBeanDefinitionReader {
                 if (element.attributeValue(SCOPE_ATTRIBUTE) != null) {
                     beanDefinition.setScope(element.attributeValue(SCOPE_ATTRIBUTE));
                 }
+                parseConstructorArgElements(element, beanDefinition);
                 parsePropertyElements(element, beanDefinition);
                 this.beanDefinitionRegistry.registerBeanDefinition(id, beanDefinition);
             }
@@ -76,6 +83,30 @@ public class XmlBeanDefinitionReader {
                 }
             }
         }
+    }
+
+    // org.springframework.beans.factory.xml.BeanDefinitionParserDelegate#parseConstructorArgElements
+    public void parseConstructorArgElements(Element beanEle, BeanDefinition bd) {
+        Iterator<Element> elementIterator = beanEle.elementIterator(CONSTRUCTOR_ARG_ELEMENT);
+        while (elementIterator.hasNext()) {
+            Element propElem = elementIterator.next();
+            parseConstructorArgElement(propElem, bd);
+        }
+    }
+
+    // org.springframework.beans.factory.xml.BeanDefinitionParserDelegate#parseConstructorArgElement
+    public void parseConstructorArgElement(Element ele, BeanDefinition bd) {
+        String typeAttr = ele.attributeValue(TYPE_ATTRIBUTE);
+        String nameAttr = ele.attributeValue(NAME_ATTRIBUTE);
+        Object value = parsePropertyValue(ele, bd, null);
+        ConstructorArgument.ValueHolder valueHolder = new ConstructorArgument.ValueHolder(value);
+        if (StringUtils.hasLength(typeAttr)) {
+            valueHolder.setType(typeAttr);
+        }
+        if (StringUtils.hasLength(nameAttr)) {
+            valueHolder.setName(nameAttr);
+        }
+        bd.getConstructorArgument().addArgumentValue(valueHolder);
     }
 
     // 参照：org.springframework.beans.factory.xml.BeanDefinitionParserDelegate#parsePropertyElements
@@ -103,8 +134,6 @@ public class XmlBeanDefinitionReader {
         String elementName = (propertyName != null) ?
                 "<property> element for property '" + propertyName + "'" :
                 "<constructor-arg> element";
-
-
 
         boolean hasRefAttribute = (ele.attributeValue(REF_ATTRIBUTE) != null);
         boolean hasValueAttribute = (ele.attributeValue(VALUE_ATTRIBUTE) != null);
