@@ -8,6 +8,7 @@ import hochenchong.litespring.beans.factory.BeanCreationException;
 import hochenchong.litespring.beans.factory.BeanDefinitionStoreException;
 import hochenchong.litespring.beans.factory.config.ConfigurableBeanFactory;
 import hochenchong.litespring.util.ClassUtils;
+import org.apache.commons.beanutils.BeanUtils;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -71,7 +72,7 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
         }
 
         BeanDefinitionValueResolver valueResolver = new BeanDefinitionValueResolver(this);
-        TypeConverter converter = new SimpleTypeConverter();
+        // TypeConverter converter = new SimpleTypeConverter();
         try {
             for (PropertyValue propertyValue : propertyValues) {
                 String propertyValueName = propertyValue.getName();
@@ -83,8 +84,9 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
                 for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
                     if (propertyDescriptor.getName().equals(propertyValueName)) {
                         // 类型转换
-                        Object convertedValue = converter.convertIfNecessary(resolveValue, propertyDescriptor.getPropertyType());
-                        propertyDescriptor.getWriteMethod().invoke(bean, convertedValue);
+                        // Object convertedValue = converter.convertIfNecessary(resolveValue, propertyDescriptor.getPropertyType());
+                        // propertyDescriptor.getWriteMethod().invoke(bean, convertedValue);
+                        BeanUtils.copyProperty(bean, propertyValueName, resolveValue);
                         break;
                     }
                 }
