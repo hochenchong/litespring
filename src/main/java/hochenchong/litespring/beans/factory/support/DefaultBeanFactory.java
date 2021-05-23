@@ -95,6 +95,12 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
     }
 
     private Object instantiateBean(BeanDefinition beanDefinition) {
+        // 如果 Bean 定义中有构造参数，则用构造器参数注入
+        if (beanDefinition.hasConstructorArgumentValues()) {
+            ConstructorResolver resolver = new ConstructorResolver(this);
+            return resolver.autowireConstructor(beanDefinition);
+        }
+
         ClassLoader classLoader = this.getBeanClassLoader();
         String beanClassName = beanDefinition.getBeanClassName();
         try {

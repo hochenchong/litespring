@@ -31,6 +31,10 @@ public class ConstructorArgument {
         return this.argumentValues.size();
     }
 
+    public boolean isEmpty() {
+        return this.argumentValues.isEmpty();
+    }
+
     // 来自于 org.springframework.beans.factory.config.ConstructorArgumentValues.ValueHolder
     public static class ValueHolder {
         private Object value;
