@@ -1,9 +1,11 @@
 package hochenchong.litespring.beans.factory.support;
 
-public class BeanDefinitionValueResolver {
-    private final DefaultBeanFactory beanFactory;
+import hochenchong.litespring.beans.factory.BeanFactory;
 
-    public BeanDefinitionValueResolver(DefaultBeanFactory factory) {
+public class BeanDefinitionValueResolver {
+    private final BeanFactory beanFactory;
+
+    public BeanDefinitionValueResolver(BeanFactory factory) {
         this.beanFactory = factory;
     }
 

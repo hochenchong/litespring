@@ -22,9 +22,13 @@ public class ConstructorArgument {
     }
 
     // org.springframework.beans.factory.config.ConstructorArgumentValues#getGenericArgumentValues
-    public List<ValueHolder> getArgumentValue() {
+    public List<ValueHolder> getArgumentValues() {
         // return this.argumentValues;
         return Collections.unmodifiableList(this.argumentValues);
+    }
+
+    public int getArgumentCount() {
+        return this.argumentValues.size();
     }
 
     // 来自于 org.springframework.beans.factory.config.ConstructorArgumentValues.ValueHolder

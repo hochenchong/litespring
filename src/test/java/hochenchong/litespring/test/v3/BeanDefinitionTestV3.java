@@ -25,7 +25,7 @@ public class BeanDefinitionTestV3 {
         Assert.assertEquals("hochenchong.litespring.service.v3.PetStoreService", beanDefinition.getBeanClassName());
 
         ConstructorArgument args = beanDefinition.getConstructorArgument();
-        List<ConstructorArgument.ValueHolder> valueHolders = args.getArgumentValue();
+        List<ConstructorArgument.ValueHolder> valueHolders = args.getArgumentValues();
 
         Assert.assertEquals(3, valueHolders.size());
 
