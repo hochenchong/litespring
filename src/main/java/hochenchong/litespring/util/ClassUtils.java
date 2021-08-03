@@ -8,6 +8,12 @@ import java.util.Map;
 public class ClassUtils {
     public static final String ARRAY_SUFFIX = "[]";
 
+    /** The package separator character: '.' */
+    private static final char PACKAGE_SEPARATOR = '.';
+
+    /** The path separator character: '/' */
+    private static final char PATH_SEPARATOR = '/';
+
     private static final Map<Class<?>, Class<?>> primitiveWrapperTypeMap = new HashMap<Class<?>, Class<?>>(8);
 
     private static final Map<Class<?>, Class<?>> primitiveTypeToWrapperMap = new HashMap<Class<?>, Class<?>>(8);
@@ -134,5 +140,25 @@ public class ClassUtils {
         }
         result.insert(0, clazz.getName());
         return result.toString();
+    }
+
+    /**
+     * Convert a "/"-based resource path to a "."-based fully qualified class name.
+     * @param resourcePath the resource path pointing to a class
+     * @return the corresponding fully qualified class name
+     */
+    public static String convertResourcePathToClassName(String resourcePath) {
+        Assert.notNull(resourcePath, "Resource path must not be null");
+        return resourcePath.replace(PATH_SEPARATOR, PACKAGE_SEPARATOR);
+    }
+
+    /**
+     * Convert a "."-based fully qualified class name to a "/"-based resource path.
+     * @param className the fully qualified class name
+     * @return the corresponding resource path, pointing to the class
+     */
+    public static String convertClassNameToResourcePath(String className) {
+        Assert.notNull(className, "Class name must not be null");
+        return className.replace(PACKAGE_SEPARATOR, PATH_SEPARATOR);
     }
 }
