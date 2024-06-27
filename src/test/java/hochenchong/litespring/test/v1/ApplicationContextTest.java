@@ -19,7 +19,7 @@ public class ApplicationContextTest {
     }
     
     @Test
-    public void testFileSystemXmlAppcationContextGetBean() {
+    public void testFileSystemXmlApplicationContextGetBean() {
         ApplicationContext applicationContext = new FileSystemXmlApplicationContext("src/test/resources/petstore-v1.xml");
 
         PetStoreService petStoreService = (PetStoreService) applicationContext.getBean("petStore");

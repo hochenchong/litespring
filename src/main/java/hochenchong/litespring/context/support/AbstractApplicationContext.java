@@ -6,6 +6,12 @@ import hochenchong.litespring.context.ApplicationContext;
 import hochenchong.litespring.core.io.Resource;
 import hochenchong.litespring.util.ClassUtils;
 
+/**
+ * 抽象 ApplicationContext
+ * 使用设计模式：模板方法。将重复的代码使用该抽象类实现
+ * 实现类实现该抽象类的抽象方法：{@link AbstractApplicationContext#getResourceByPath(String)}
+ *     从不同的来源获取 xml
+ */
 public abstract class AbstractApplicationContext implements ApplicationContext {
     private DefaultBeanFactory beanFactory;
 

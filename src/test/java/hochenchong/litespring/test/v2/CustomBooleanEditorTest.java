@@ -11,19 +11,19 @@ public class CustomBooleanEditorTest {
     public void testConvertString() {
         CustomBooleanEditor editor = new CustomBooleanEditor(true);
         editor.setAsText("true");
-        Assert.assertEquals(true, ((Boolean) editor.getValue()).booleanValue());
+        Assert.assertTrue((Boolean) editor.getValue());
         editor.setAsText("false");
-        Assert.assertEquals(false, ((Boolean) editor.getValue()).booleanValue());
+        Assert.assertFalse((Boolean) editor.getValue());
 
         editor.setAsText("on");
-        Assert.assertEquals(true, ((Boolean) editor.getValue()).booleanValue());
+        Assert.assertTrue((Boolean) editor.getValue());
         editor.setAsText("off");
-        Assert.assertEquals(false, ((Boolean) editor.getValue()).booleanValue());
+        Assert.assertFalse((Boolean) editor.getValue());
 
         editor.setAsText("yes");
-        Assert.assertEquals(true, ((Boolean) editor.getValue()).booleanValue());
+        Assert.assertTrue((Boolean) editor.getValue());
         editor.setAsText("no");
-        Assert.assertEquals(false, ((Boolean) editor.getValue()).booleanValue());
+        Assert.assertFalse((Boolean) editor.getValue());
 
         try {
             editor.setAsText("aabbcc");
